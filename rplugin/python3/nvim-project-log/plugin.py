@@ -19,14 +19,23 @@ class Main(object):
             directories = self.vim.api.get_var('project_log#logbooks')
         except OSError:
             directories = ['~/notes']
-        self.log_dirs = [LogDir(directory) for directory in directories]
+        self.log_dirs = [LogDirectory(directory) for directory in directories]
         self.current_index = 0
 
-    def get_current_log(self) -> LogDir:
+    def get_current_log(self) -> LogDirectory:
         return self.log_dirs[self.current_index]
 
-    def num_log_dirs(self):
+    def num_log_dirs(self) -> int:
         return len(self.log_dirs)
+
+    def update_current_index(self, count) -> None:
+        # Handle error condition
+        if count > self.num_log_dirs():
+            self.error('[Count] of {} is outside range of logbooks.'.format(count))
+            return
+        # Count specified -> update current index
+        if count > 0:
+            self.current_index = count - 1
 
     def error(self, message: str) -> None:
         """Handle error messages in a consitent fashion."""
@@ -35,24 +44,26 @@ class Main(object):
     @neovim.command('ProjectLogIndex', count=-1)
     def open_index(self, count: int) -> None:
         """Navigate to the index of the logbook."""
-        # Handle error condition
-        if count > self.num_log_dirs():
-            self.error('[Count] of {} is outside range of logbooks.'.format(count))
-            return
-        # Count specified -> update current index
-        if count > 0:
-            self.current_index = count - 1
+        self.update_current_index(count)
         # Open index file
         self.vim.command('edit {}'.format(self.get_current_log().get_index()))
 
     @neovim.command('ProjectLogToday', count=-1)
     def open_entry(self, count: int) -> None:
-        # Handle error condition
-        if count > self.num_log_dirs():
-            self.error('[Count] of {} is outside range of logbooks.'.format(count))
-            return
-        # Count specified -> update current index
-        if count > 0:
-            self.current_index = count - 1
+        self.update_current_index(count)
         # Open index file
         self.vim.command('edit {}'.format(self.get_current_log().get_entry()))
+
+    @neovim.command('ProjectLogPrevious')
+    def project_log_previous(self) -> None:
+        current_file = self.vim.current.buffer.name
+        self.vim.command('edit {}'.format(self.get_current_log().get_previous(current_file)))
+
+    @neovim.command('ProjectLogNext')
+    def project_log_next(self) -> None:
+        current_file = self.vim.current.buffer.name
+        self.vim.command('edit {}'.format(self.get_current_log().get_next(current_file)))
+
+    @neovim.command('ProjectLogUpdateIndex')
+    def project_log_update_index(self) -> None:
+        self.get_current_log().update_index()
