@@ -8,6 +8,7 @@
 
 import datetime
 from pathlib import Path
+from typing import List, Iterator
 
 import neovim
 
@@ -17,12 +18,27 @@ class LogDir(object):
         self.directory = Path(directory)
         self.index = 'index.md'
 
+    @property
+    def file_list(self) -> List[Path]:
+        return list(self)
+
+    def __iter__(self) -> Iterator[Path]:
+        return dist(self.directory.glob('????-??-??.md'))
+
     def get_index(self) -> str:
         return str(self.directory / self.index)
 
     def get_entry(self) -> str:
-        now = datetime.datetime.now()
-        return '{date}.md'.format(date=now.strftime('%Y-%m-%d'))
+        today = datetime.datetime.now().strftime('%Y-%m-%d')
+        return str(self.directory / '{date}.md'.format(date=today))
+
+    def get_file_index(self, filename: Path) -> int:
+        """Get the position of the current file within the list."""
+        for index, fname in enumerate(self):
+            if fname == filename:
+                return index
+
+    def 
 
 
 @neovim.plugin
@@ -30,6 +46,10 @@ class Main(object):
     def __init__(self, vim) -> None:
         self.vim = vim
         directories = ['~/notes']
+        try:
+            directories = self.vim.api.get_var('project_log#logbooks')
+        except OSError:
+            directories = ['~/notes']
         self.log_dirs = [LogDir(directory) for directory in directories]
         self.current_index = 0
 
