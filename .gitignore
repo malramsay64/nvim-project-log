@@ -1,0 +1,5 @@
+# python
+.mypy_cache/*
+
+# test index
+test/test_index/index.md
