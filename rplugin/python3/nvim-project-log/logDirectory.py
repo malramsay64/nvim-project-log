@@ -11,7 +11,7 @@ from typing import List, Iterator
 
 import logging
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('nvim-project-log')
 logger.setLevel(logging.DEBUG)
 
 
@@ -48,8 +48,11 @@ class LogDirectory(object):
 
     def get_file_index(self, filename: Path) -> int:
         """Get the position of the current file within the list."""
+        logger.debug('Finding index of %s in dir %s', filename.name, filename.parent)
         for index, iter_fname in enumerate(self):
-            if iter_fname == filename:
+            iter_fname = Path(iter_fname)
+            logger.debug('  Index: %s, filename: %s', index, iter_fname.name)
+            if iter_fname.name == filename.name:
                 return index
         raise IndexError('{} was not found'.format(filename))
 
@@ -64,8 +67,11 @@ class LogDirectory(object):
         """
         try:
             current_index = self.get_file_index(filename)
+
+            logger.debug('Current index: %s', current_index)
             return self.file_list[current_index + 1]
         except IndexError:
+            logger.debug('Current index not found.')
             # Check there are elements in the list
             if self.file_list:
                 # The last item is the oldest
