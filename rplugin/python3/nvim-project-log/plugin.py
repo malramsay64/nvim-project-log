@@ -32,7 +32,7 @@ class Main(object):
 
     def _set_log_status(self) -> None:
         root = logging.getLogger('nvim-project-log')
-        handler = logging.FileHandler(filename='/Users/malcolm/project_log.log')
+        handler = logging.FileHandler(filename='/tmp/project_log.log')
         root.addHandler(handler)
         root.setLevel(logging.DEBUG)
         logstatus = self.vim.api.get_var('project_log#log_level')
