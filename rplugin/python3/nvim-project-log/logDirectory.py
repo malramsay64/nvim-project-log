@@ -103,8 +103,14 @@ class LogDirectory(object):
         """Add all the files to the index as links labelled by the first line."""
         index_string = 'Index\n=====\n\n'
         for logfile in self:
+            # Handle case where today's file is not written to disk
+            if not logfile.exists():
+                break
             with logfile.open() as src:
-                index_string += '- [{label}]({link})\n'.format(label=src.readline().strip(),
+                heading = src.readline().strip()
+                if not heading:
+                    heading = logfile.stem
+                index_string += '- [{label}]({link})\n'.format(label=heading,
                                                                link=logfile.name)
         with self.get_index().open('w') as dst:
             dst.write(index_string)
