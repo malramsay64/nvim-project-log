@@ -21,7 +21,7 @@ class LogDirectory(object):
         self.index = 'index.md'
 
     @property
-    def _file_list(self):
+    def _files(self):
         return self.directory.glob('????-??-??.md')
 
     @property
@@ -29,12 +29,16 @@ class LogDirectory(object):
         return list(self)
 
     def __iter__(self) -> Iterator[Path]:
-        for file in sorted(list(self._file_list), reverse=True):
-            yield file
+        yield self.get_entry()
+        for file in sorted(list(self._files), reverse=True):
+            if file != self.get_entry():
+                yield file
 
     def __reversed__(self) -> Iterator[Path]:
-        for file in sorted(list(self._file_list), reverse=False):
-            yield file
+        for file in sorted(list(self._files), reverse=False):
+            if file != self.get_entry():
+                yield file
+        yield self.get_entry()
 
     def __len__(self) -> int:
         return len(list(self._file_list))
