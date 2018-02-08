@@ -31,14 +31,7 @@ class Main(object):
         self.current_index = 0
 
     def _set_log_status(self) -> None:
-        root = logging.getLogger('nvim-project-log')
-        handler = logging.FileHandler(filename='/tmp/project_log.log')
-        root.addHandler(handler)
-        root.setLevel(logging.DEBUG)
-        logstatus = self.vim.api.get_var('project_log#log_level')
-        log_level = getattr(logging, logstatus, logging.DEBUG)
-        logging.basicConfig(level=logging.DEBUG, filename='/tmp/nvim-project-log.log')
-        logger.debug('Setting log level to %s', log_level)
+        return
 
     @property
     def current_log(self) -> LogDirectory:
