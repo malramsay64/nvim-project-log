@@ -18,7 +18,7 @@ LOGDIR = CWD / 'test_log'
 
 def test_file_list():
     log = LogDirectory(LOGDIR)
-    assert len(log.file_list) == 26
+    assert len(log.file_list) == 27
     assert log.file_list == sorted(log.file_list, reverse=True)
 
 
@@ -27,7 +27,6 @@ def test_file_index():
     for index, filename in enumerate(log):
         print(index)
         assert log.get_file_index(filename) == index
-
 
 def test_get_previous():
     log = LogDirectory(LOGDIR)
