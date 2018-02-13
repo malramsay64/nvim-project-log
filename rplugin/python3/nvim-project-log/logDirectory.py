@@ -41,7 +41,7 @@ class LogDirectory(object):
         yield self.get_entry()
 
     def __len__(self) -> int:
-        return len(list(self._file_list))
+        return len(list(self._files))
 
     def get_index(self) -> Path:
         return self.directory / self.index
