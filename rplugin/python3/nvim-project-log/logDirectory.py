@@ -105,7 +105,7 @@ class LogDirectory(object):
         for logfile in self:
             # Handle case where today's file is not written to disk
             if not logfile.exists():
-                break
+                continue
             with logfile.open() as src:
                 heading = src.readline().strip()
                 if not heading:
